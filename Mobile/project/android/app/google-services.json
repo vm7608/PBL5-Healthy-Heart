@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "389675936559",
+    "firebase_url": "https://my-second-776e4-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "my-second-776e4",
+    "storage_bucket": "my-second-776e4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:389675936559:android:8cc762f3f138d5a355cfda",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "389675936559-t1jvv5g1da6ogfpqe6q8f5tm1o4trnsi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDjkB-DJ_csWi9KB3cQwCgxjlUaohS9IM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "389675936559-t1jvv5g1da6ogfpqe6q8f5tm1o4trnsi.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
