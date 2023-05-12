@@ -1,11 +1,7 @@
-import 'dart:async';
-
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Screens/Home/HeartMonitor/heartresult.dart';
 import 'package:project/WidgetS/Custom.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class HeartScreen extends StatefulWidget {
   const HeartScreen({super.key});
@@ -23,15 +19,6 @@ class _HeartScreenState extends State<HeartScreen> {
     super.initState();
     
   }
-  
-  void callApi() async {
-    print(1);
-    var url = Uri.http('172.21.0.166', '/getdata');
-    print(url);
-    var response = await http.get(url);
-    var otherResult = json.decode(response.body);
-    print('Response body: ${otherResult["len"]}');
-  }
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(96, 119, 213, 232),
@@ -39,10 +26,14 @@ class _HeartScreenState extends State<HeartScreen> {
       body: Center(
         child: RawMaterialButton(
           onPressed: () {
-            // Navigator.push(context, MaterialPageRoute(builder: (context) {
-            //   return HeartResult();
-            // },)); 
-            callApi();
+            FirebaseDatabase.instance.ref().get().then((snapshot) {
+              Map<Object?, Object?> data = snapshot.value as Map<Object?, Object?>;
+              if (data["uid"] == 0) {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return HeartResult();
+                },)); 
+              }
+            });
           },
           
           fillColor: Colors.blue[100],
