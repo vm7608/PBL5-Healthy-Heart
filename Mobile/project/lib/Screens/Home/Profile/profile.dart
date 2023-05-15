@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project/Screens/Home/Profile/setting.dart';
 import 'package:project/Screens/loading.dart';
 import 'package:project/services/auth.dart';
 
@@ -28,6 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           );
         }
         if (snapshot.hasData) {
+
           return Scaffold(
             backgroundColor: const Color.fromARGB(96, 119, 213, 232),
             appBar: AppBar(
@@ -38,6 +40,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     AuthService().SignOut();
                   },
                   icon: const Icon(Icons.output_outlined)
+                ),
+                IconButton( 
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      return const SettingScreen();
+                    },));
+                  },
+                  icon: const Icon(Icons.settings) 
                 )
               ],
             ),

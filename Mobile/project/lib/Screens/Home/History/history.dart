@@ -51,7 +51,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ), 
                   tileColor: Colors.white,
                   leading: const SpinKitPumpingHeart(color: Colors.red,),
-                  title: Text("Heart rate: ${doc['heart_rate']}"), 
+                  title: Text("Heart rate: ${doc['bpm']}"), 
                   subtitle: Text('Date: ${doc['date_time'].toDate()}'),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) {

@@ -20,6 +20,8 @@ class LocalUser {
 
       uid = document;
       email = user.email;
+      print(uid);
+      print(email);
     }
     else {
       document = null;

@@ -28,7 +28,7 @@ class _HeartScreenState extends State<HeartScreen> {
           onPressed: () {
             FirebaseDatabase.instance.ref().get().then((snapshot) {
               Map<Object?, Object?> data = snapshot.value as Map<Object?, Object?>;
-              if (data["uid"] == 0) {
+              if (data["run"] == 0) {
                 Navigator.push(context, MaterialPageRoute(builder: (context) {
                   return HeartResult();
                 },)); 

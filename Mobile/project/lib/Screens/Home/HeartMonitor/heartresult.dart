@@ -1,9 +1,13 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:project/Models/API.dart';
+import 'package:project/Models/Heartdata.dart';
 import 'package:project/Screens/loading.dart';
 import 'package:project/WidgetS/Custom.dart';
 import 'package:project/services/auth.dart';
@@ -31,19 +35,22 @@ class _HeartResultState extends State<HeartResult> {
   dynamic listener;
   int run = -1;
   double processDuration = 1.0;
+  DateTime timeCounter = DateTime.now();
+  int CheckTime = 60;
+  late Heartdata heart;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    heart = Heartdata(result: null, bpm: 0);
     body = const Loading(); 
-    otherResult = [const Text("Another result")];
+    otherResult = [const Text("Waiting another result...")];
     heartrate = 0;
     ref = FirebaseDatabase.instance.ref();
     time = DateTime.now();
     _ValueListener();
-    FirebaseDatabase.instance.ref().update({"run":1, "uid": AuthService.localuser.uid});
-    changeRun(0);
-    
+    FirebaseDatabase.instance.ref().update({"run":1, "uid": AuthService.localuser.uid, "data": ""});
+    checkDevice(CheckTime);
   }
   @override
   void dispose() {
@@ -57,6 +64,7 @@ class _HeartResultState extends State<HeartResult> {
     
     listener = ref.onValue.listen((event) {
       // try {
+        timeCounter = DateTime.now();
         if (mounted) 
         {
           setState(() {  
@@ -77,40 +85,42 @@ class _HeartResultState extends State<HeartResult> {
                 if (run == 1) {
                   list = List.empty(growable: true);
                   var docs = values["data"].toString();
-                  var datas = docs.split(',');
-                  for (var i =0; i< datas.length; i++) {
-                    list.add(ValueECG(time: double.parse((i*1.0/processDuration).toStringAsFixed(3)), value: int.parse(datas[i].toString()) * 1.0));
+                  if (docs!="") {
+                    var datas = docs.split(',');
+                    for (var i =0; i< datas.length; i++) {
+                      list.add(ValueECG(time: double.parse((i*processDuration/datas.length).toStringAsFixed(3)), value: int.parse(datas[i].toString()) * 1.0));
+                    }
+                    // if (docs.runtimeType != List<Object?>) {
+                    //   docs = docs as Map<Object?, Object?>;
+                    //   data = docs.map((key, value) => MapEntry(key.toString(), value.toString()));
+                    //   var docss = docs.map((key, value) => MapEntry(
+                    //     int.parse(key.toString()), int.parse(value.toString())
+                    //   ));
+                    //   var docsss = docss.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
+                    //   docsss.forEach((element) { 
+                    //     list.add(ValueECG(time: element.key*1.0, value: element.value*1.0));
+                    //   });
+                    // }
+                    // else {
+                    //   docs = docs as List<Object?>;
+                    //   for (var i =0; i< docs.length; i++) {
+                    //     list.add(ValueECG(time: i*1.0, value: int.parse(docs[i].toString()) * 1.0));
+                    //   }
+                    // }
                   }
-                  // if (docs.runtimeType != List<Object?>) {
-                  //   docs = docs as Map<Object?, Object?>;
-                  //   data = docs.map((key, value) => MapEntry(key.toString(), value.toString()));
-                  //   var docss = docs.map((key, value) => MapEntry(
-                  //     int.parse(key.toString()), int.parse(value.toString())
-                  //   ));
-                  //   var docsss = docss.entries.toList()..sort((a, b) => a.key.compareTo(b.key));
-                  //   docsss.forEach((element) { 
-                  //     list.add(ValueECG(time: element.key*1.0, value: element.value*1.0));
-                  //   });
-                  // }
-                  // else {
-                  //   docs = docs as List<Object?>;
-                  //   for (var i =0; i< docs.length; i++) {
-                  //     list.add(ValueECG(time: i*1.0, value: int.parse(docs[i].toString()) * 1.0));
-                  //   }
-                  // }
+                  
 
                   if (values.containsKey("heart_rate")) {
                     heartrate = int.parse(values["heart_rate"].toString());
                   }
-                  body = const Loading(text: "    Đang đo\nVui lòng đợi...");
+                  body = const Loading(text: "    Measuring\nPlease waiting...");
                 }
-                else {
+                else if (list.isNotEmpty) {
                   body = _body();
                 }
               }
-              if (run == 0) {
+              if (run == 0 && list.isNotEmpty) {
                 callApi();
-                body = _body();
               }
             }
           });
@@ -124,53 +134,43 @@ class _HeartResultState extends State<HeartResult> {
 
   
   void callApi() async {
-    // var url = Uri.http('127.0.0.1:8000', '/API');
-    // print(url.toString());
-    // var response = await http.get(url);
-    // var result = json.decode(response.body) as Map<Object, Object>;
-    var result = {"success": true, "result": {"A": 0.77, "B": 0.23, "C": 0.43}, "numberofbeats": 31, "bpm": 80};
-    print(result.toString());
-    if (result["success"] == true)
-    {
-      var resultclass = result["result"] as Map<String, double>;
-      double value = 0.0;
-      String classname = "";
-      String allresult = "";
-      final sorted = resultclass.entries.toList()..sort((a, b)=> b.value.compareTo(a.value));
-      value = sorted[0].value;
-      classname = sorted[0].key;
-      sorted.forEach((element) {
-        allresult += "${element.key}: ${element.value}\n";
-      });
-      print(sorted);
+    var url = Uri.http(API.host, API.address);
+    print(url.toString());
+    try {
+      var response = await http.get(url);
+      var result = json.decode(response.body) as Map<String, dynamic>;
+      if (result["success"] == true)
+      {
+        var resultclass = result["result"] as Map<String, dynamic>;
+        heart = Heartdata(result:resultclass, bpm: result["bpm"]);
+        
+        otherResult = heart.view();
+        if (mounted) {
+          setState(() {
+            body = _body();
+          });
+        }
+      }
+      else {
+        otherResult = [
+          const Text("Something is wrong. Check your device.")
+        ];
+        setState(() {
+          body = _body();
+        });
+      }
+    } catch (e) {
       otherResult = [
-        SizedBox(height: 10,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 200, child: Text("Kết quả đo (chính xác nhất):")),
-            SizedBox(width: 80, child: Text(classname)),
-          ],
-        ),
-        SizedBox(height: 10,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(width: 200, child: Text("Kết quả đo (toàn bộ):")),
-            SizedBox(width: 80, child: Text(allresult)),
-          ],
-        ),
-        SizedBox(height: 10,),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(width: 200, child: Text("Nhịp tim trên phút:")),
-            SizedBox(width: 80, child: Text(result["bpm"].toString())),
-          ],
-        ),
+        const Text("API does not work")
       ];
+      if (mounted) {
+        setState(() {
+          
+          body = _body();
+        });
+      }
     }
+    
   }
   
   Future changeRun(int run) async {
@@ -179,10 +179,42 @@ class _HeartResultState extends State<HeartResult> {
     },);
   }
 
+  Future checkDevice(int time) async {
+    timeCounter = DateTime.now();
+    await Future.delayed(Duration(seconds: time-1), () {
+      if (timeCounter.add(Duration(seconds: time)).compareTo(DateTime.now()) >= 0) {
+        if (list.isEmpty && mounted && run == 1) {
+          setState(() {
+          body = Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [Text("The device doesn't work.")],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [Text("Please check it and try later")],
+                )
+                
+              ],
+            ),
+          );
+          // FirebaseDatabase.instance.ref().update({"run":0, "uid": 0});
+        });
+        }
+      }
+
+    },);
+
+  }
+
   Widget _body() {
-    Widget savelabel = const Text("Lưu");
+    Widget savelabel = const Text("Save");
     if (Issaved) {
-      savelabel = const Text("Đã lưu");
+      savelabel = const Text("Saved");
     }
     return Column(
       children: [
@@ -219,7 +251,7 @@ class _HeartResultState extends State<HeartResult> {
                   }
                   
                 },
-                child: Issaved? const Text("Đã lưu") : const Text("Lưu")
+                child: Issaved? const Text("Saved") : const Text("Save")
               ),
               
             ]..addAll(otherResult),
@@ -229,11 +261,13 @@ class _HeartResultState extends State<HeartResult> {
     );
   }
 
-  Map<String, Object> data_set() {
+  Map<String, Object?> data_set() {
     var data = {
       "data" : { for (var e in list) e.time.toString() : e.value },
       "date_time" : DateTime.now(),
-      "heart_rate" : heartrate
+      "bpm" : heart.bpm,
+      "heart" : heart.Data,
+      "Mostclass" : heart.theMostCorrectResult,
     };
     var a = data["data"] as Map<String, double>;
     print(a.length);
@@ -249,7 +283,8 @@ class _HeartResultState extends State<HeartResult> {
           setState(() {
             Issaved = false;
             FirebaseDatabase.instance.ref().update({"run":1, "uid": AuthService.localuser.uid});
-            otherResult = [const Text("Another result")];
+            otherResult = [const Text("Waiting another result...")];
+            checkDevice(CheckTime);
           });
         },
         shape: const CircleBorder(
@@ -260,7 +295,7 @@ class _HeartResultState extends State<HeartResult> {
           ),
         padding: const EdgeInsets.all(30),
         fillColor: Colors.blue[400],
-        child: const Text("Đo lại"),
+        child: const Text("  Try\nagain"),
       ),
       body: body
     );
