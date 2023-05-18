@@ -53,6 +53,7 @@ class News {
             Container(
               padding: const EdgeInsets.all(20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("$title\n", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: Colors.black),),
                   Text(preview, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.normal),),

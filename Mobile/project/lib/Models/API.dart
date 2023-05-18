@@ -1,6 +1,6 @@
 class API {
-  static String host = "192.168.0.2";
-  static String address = "predict2";
+  static String host = "192.168.21.124";
+  static String address = "predict";
 
   static String get url {
     return API.host.toString() + API.address.toString();

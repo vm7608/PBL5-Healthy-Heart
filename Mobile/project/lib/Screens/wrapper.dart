@@ -11,6 +11,7 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User?>(context);
+    
     if (user == null) {
       return Authenticate();
     }
@@ -34,6 +35,12 @@ class Wrapper extends StatelessWidget {
       );
     }
     else {
+      // var localuser = AuthService.localuser;
+      // if (localuser.admin != null) {
+      //   if (localuser.admin!) {
+      //     print("admin"); 
+      //   }
+      // }
       return HomeController(); 
     }
   }

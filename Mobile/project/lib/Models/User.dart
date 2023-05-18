@@ -10,6 +10,7 @@ class LocalUser {
   String? email;
   String? name;
   String? birth;
+  bool? admin;
 
   LocalUser({required this.collection}) {
     User? user= FirebaseAuth.instance.currentUser;
@@ -35,14 +36,18 @@ class LocalUser {
 
   Future getData() async {
     Map<String, dynamic> data = {};
-      var docref = FirebaseFirestore.instance.collection(collection).doc(document).get();
-      await docref.then((DocumentSnapshot doc) {
-        data = doc.data() as Map<String, dynamic>;
-      });
-    
-    gender = data['gender'];
-    name = data['name'];
-    birth = data['birth'];
+    var docref = FirebaseFirestore.instance.collection(collection).doc(document).get();
+    await docref.then((DocumentSnapshot doc) {
+      data = doc.data() as Map<String, dynamic>;
+      if (data.containsKey("admin")) {
+      admin = data["admin"];
+      }
+      else {
+        admin = false;
+      }
+      gender = data['gender'];
+      name = data['name'];
+      birth = data['birth'];
+    });
   }
-    
 }

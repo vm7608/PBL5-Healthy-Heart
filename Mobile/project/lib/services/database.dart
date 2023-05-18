@@ -27,6 +27,7 @@ class DatabaseService {
     );
   }
   Future Add(String collection, dynamic data) async {
+    print(data.runtimeType);
     CollectionReference  homeCollection = FirebaseFirestore.instance.collection(collection);
     // QuerySnapshot _myDoc = await homeCollection.get();
     // List<DocumentSnapshot> _myDocCount = _myDoc.docs;

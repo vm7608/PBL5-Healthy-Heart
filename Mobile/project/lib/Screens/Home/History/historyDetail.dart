@@ -20,7 +20,7 @@ class _historyDetailState extends State<historyDetail> {
   late int bpm;
   late String time;
   late String date;
-  late List<MapEntry<String, dynamic>> heart;
+  late Map<String, dynamic> heart;
   late String? theMostCorrectResult;
   @override
   Widget build(BuildContext context) {
@@ -65,11 +65,8 @@ class _historyDetailState extends State<historyDetail> {
       theMostCorrectResult = temp.toString();
     }
     if (values.containsKey("heart")) {
-      var temp = values["heart"] as List<dynamic>;
-      heart = temp.map((e) {
-        MapEntry me = e as MapEntry;
-        return MapEntry(e.key.toString(), e.value);
-      }).toList();
+      var temp = values["heart"] as Map<String, dynamic>;
+      heart = temp;
     }
   }
   Widget _body() {
@@ -102,13 +99,15 @@ class _historyDetailState extends State<historyDetail> {
           child: Row(
             children: [ 
               const SizedBox(width: 30,),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text("Đo vào lúc: $time"),
-                  const SizedBox(height: 10,),
-                  Text("Đo vào ngày: $date"),
-                ]..addAll(heartdata.view()),
+              SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Đo vào lúc: $time"),
+                    const SizedBox(height: 10,),
+                    Text("Đo vào ngày: $date"),
+                  ]..addAll(heartdata.view()),
+                ),
               ),
             ],
           )
@@ -118,7 +117,7 @@ class _historyDetailState extends State<historyDetail> {
             FirebaseFirestore.instance.collection('History').doc(widget.id).delete();
             Navigator.pop(context);
           },
-          child: const Text("Xoá")
+          child: const Text("Delete")
         )
       ],
     );

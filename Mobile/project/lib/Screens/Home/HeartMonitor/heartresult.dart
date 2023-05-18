@@ -36,7 +36,7 @@ class _HeartResultState extends State<HeartResult> {
   int run = -1;
   double processDuration = 1.0;
   DateTime timeCounter = DateTime.now();
-  int CheckTime = 60;
+  int CheckTime = 90;
   late Heartdata heart;
   @override
   void initState() {
@@ -81,6 +81,9 @@ class _HeartResultState extends State<HeartResult> {
               }
 
               if (values.containsKey("run")) {
+                if (values.containsKey("ip")) {
+                  API.host = values["ip"].toString();
+                }
                 run = int.parse(values['run'].toString());
                 if (run == 1) {
                   list = List.empty(growable: true);
@@ -153,17 +156,18 @@ class _HeartResultState extends State<HeartResult> {
       }
       else {
         otherResult = [
-          const Text("Something is wrong. Check your device.")
+          const Text("Something is wrong. Check your device and API.")
         ];
         setState(() {
           body = _body();
         });
       }
     } catch (e) {
+      throw e;
       otherResult = [
         const Text("API does not work")
       ];
-      if (mounted) {
+      if (mounted) { 
         setState(() {
           
           body = _body();
@@ -182,28 +186,30 @@ class _HeartResultState extends State<HeartResult> {
   Future checkDevice(int time) async {
     timeCounter = DateTime.now();
     await Future.delayed(Duration(seconds: time-1), () {
+      
       if (timeCounter.add(Duration(seconds: time)).compareTo(DateTime.now()) >= 0) {
+        print(11);
         if (list.isEmpty && mounted && run == 1) {
           setState(() {
-          body = Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [Text("The device doesn't work.")],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [Text("Please check it and try later")],
-                )
-                
-              ],
-            ),
-          );
-          // FirebaseDatabase.instance.ref().update({"run":0, "uid": 0});
-        });
+            body = Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [Text("The device doesn't work.")],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [Text("Please check it and try later")],
+                  )
+                  
+                ],
+              ),
+            );
+            // FirebaseDatabase.instance.ref().update({"run":0, "uid": 0});
+          });
         }
       }
 
@@ -237,24 +243,26 @@ class _HeartResultState extends State<HeartResult> {
         const Text("Electrocardiogram"),
         Expanded(
           flex: 1,
-          child: Column(
-            children: [
-              ElevatedButton(onPressed: () {
-                  if (!Issaved && run == 0 && list.isNotEmpty) {
-                    DatabaseService().Add("History", data_set());
-                    if (mounted) {
-                      setState(() {
-                        Issaved = true;
-                        body = _body();
-                      });
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                ElevatedButton(onPressed: () {
+                    if (!Issaved && run == 0 && list.isNotEmpty) {
+                      DatabaseService().Add("History", data_set());
+                      if (mounted) {
+                        setState(() {
+                          Issaved = true;
+                          body = _body();
+                        });
+                      }
                     }
-                  }
-                  
-                },
-                child: Issaved? const Text("Saved") : const Text("Save")
-              ),
-              
-            ]..addAll(otherResult),
+                    
+                  },
+                  child: Issaved? const Text("Saved") : const Text("Save")
+                ),
+                
+              ]..addAll(otherResult),
+            ),
           )
         ),
       ],
@@ -293,11 +301,11 @@ class _HeartResultState extends State<HeartResult> {
               width: 3,
             ) 
           ),
-        padding: const EdgeInsets.all(30),
-        fillColor: Colors.blue[400],
+        padding: const EdgeInsets.all(15),
+        fillColor: Colors.yellow[400],
         child: const Text("  Try\nagain"),
       ),
-      body: body
+      body:  body
     );
   }
 }
