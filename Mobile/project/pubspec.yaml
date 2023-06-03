@@ -47,7 +47,7 @@ dependencies:
   syncfusion_flutter_charts: ^20.4.54
   cached_network_image: ^3.2.3
   http: ^0.13.5
-  firebase_messaging: ^14.5.0
+  firebase_messaging: ^14.5.0 
 
 dev_dependencies:
   flutter_test:

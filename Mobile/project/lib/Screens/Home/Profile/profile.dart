@@ -13,10 +13,16 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   double formWeight = 320;
+
+  var localuser = AuthService.localuser;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    localuser.getData().then((value) => setState(() {}));
+  }
   @override
   Widget build(BuildContext context) {
-    var localuser = AuthService.localuser;
-
     final _profileStream =
         FirebaseFirestore.instance.collection('profile').doc(localuser.uid).snapshots();
     return StreamBuilder<DocumentSnapshot>(
@@ -162,4 +168,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
     ],
   );
+
 }

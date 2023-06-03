@@ -44,7 +44,7 @@ class _HeartScreenState extends State<HeartScreen> {
             ) 
           ),
           padding: const EdgeInsets.all(40),
-          child: const Text("Bắt đầu đo"),
+          child: const Text("Bắt đầu đo", style: TextStyle(fontSize: 15, color: Colors.black), textAlign: TextAlign.center),
         )
       )
       

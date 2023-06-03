@@ -8,6 +8,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Models/API.dart';
 import 'package:project/Models/Heartdata.dart';
+import 'package:project/Screens/Note.dart';
+import 'package:project/Screens/ProgressCircular.dart';
 import 'package:project/Screens/loading.dart';
 import 'package:project/WidgetS/Custom.dart';
 import 'package:project/services/auth.dart';
@@ -23,7 +25,6 @@ class HeartResult extends StatefulWidget {
 }
 
 class _HeartResultState extends State<HeartResult> {
-
   late List<ValueECG> list = List.empty(growable: true);
   late Map<String, String> data; 
   Widget body = const Center( child: Text("Waiting..."));
@@ -36,20 +37,21 @@ class _HeartResultState extends State<HeartResult> {
   int run = -1;
   double processDuration = 1.0;
   DateTime timeCounter = DateTime.now();
-  int CheckTime = 90;
+  int CheckTime = 50;
+  String titles = "";
   late Heartdata heart;
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     heart = Heartdata(result: null, bpm: 0);
-    body = const Loading(); 
+    body = ProgressCircular(time: Duration(seconds: CheckTime).inMilliseconds.toDouble(),); 
     otherResult = [const Text("Waiting another result...")];
     heartrate = 0;
     ref = FirebaseDatabase.instance.ref();
     time = DateTime.now();
     _ValueListener();
-    FirebaseDatabase.instance.ref().update({"run":1, "uid": AuthService.localuser.uid, "data": ""});
+    FirebaseDatabase.instance.ref().update({"run":1, /*"uid": AuthService.localuser.uid, "data": ""*/});
     checkDevice(CheckTime);
   }
   @override
@@ -116,7 +118,10 @@ class _HeartResultState extends State<HeartResult> {
                   if (values.containsKey("heart_rate")) {
                     heartrate = int.parse(values["heart_rate"].toString());
                   }
-                  body = const Loading(text: "    Measuring\nPlease waiting...");
+                  print(body.runtimeType.toString());
+                  if (body.runtimeType.toString() != "ProgressCircular") {
+                    body = ProgressCircular(time: Duration(seconds: CheckTime).inMilliseconds.toDouble(),); //const Loading(text: "    Measuring\nPlease waiting...");
+                  }
                 }
                 else if (list.isNotEmpty) {
                   body = _body();
@@ -163,7 +168,6 @@ class _HeartResultState extends State<HeartResult> {
         });
       }
     } catch (e) {
-      throw e;
       otherResult = [
         const Text("API does not work")
       ];
@@ -188,7 +192,6 @@ class _HeartResultState extends State<HeartResult> {
     await Future.delayed(Duration(seconds: time-1), () {
       
       if (timeCounter.add(Duration(seconds: time)).compareTo(DateTime.now()) >= 0) {
-        print(11);
         if (list.isEmpty && mounted && run == 1) {
           setState(() {
             body = Center(
@@ -240,14 +243,34 @@ class _HeartResultState extends State<HeartResult> {
             ),
           )
         ),
-        const Text("Electrocardiogram"),
+        const Text("Điện tâm đồ"),
         Expanded(
           flex: 1,
           child: SingleChildScrollView(
             child: Column(
               children: [
-                ElevatedButton(onPressed: () {
+                ElevatedButton(onPressed: () async {
                     if (!Issaved && run == 0 && list.isNotEmpty) {
+                      titles = await Navigator.push(context, MaterialPageRoute(builder: (context) {
+                        var ctr = TextEditingController();
+                        return Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextField(
+                                controller: ctr,
+                                decoration: const InputDecoration(
+                                  border: OutlineInputBorder(),
+                                  labelText: 'Title',
+                                ),
+                              ),
+                              ElevatedButton(onPressed: () {
+                                Navigator.pop(context, ctr.text);
+                              }, child: const Text("Save"))
+                            ],
+                          )
+                        );
+                      },)); 
                       DatabaseService().Add("History", data_set());
                       if (mounted) {
                         setState(() {
@@ -261,7 +284,16 @@ class _HeartResultState extends State<HeartResult> {
                   child: Issaved? const Text("Saved") : const Text("Save")
                 ),
                 
-              ]..addAll(otherResult),
+              ]..addAll(otherResult)
+              ..add(
+                TextButton(
+                onPressed: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return const Note();// SettingScreen();
+                  },));
+                },
+                child: const Text("Xem mô tả các dấu hiệu bệnh tim mạch.", style: TextStyle(color: Colors.blue),)
+              ))..add(const SizedBox(height: 90,)),
             ),
           )
         ),
@@ -276,6 +308,8 @@ class _HeartResultState extends State<HeartResult> {
       "bpm" : heart.bpm,
       "heart" : heart.Data,
       "Mostclass" : heart.theMostCorrectResult,
+      "uid" : AuthService.localuser.uid,
+      "titles": titles
     };
     var a = data["data"] as Map<String, double>;
     print(a.length);
@@ -292,6 +326,7 @@ class _HeartResultState extends State<HeartResult> {
             Issaved = false;
             FirebaseDatabase.instance.ref().update({"run":1, "uid": AuthService.localuser.uid});
             otherResult = [const Text("Waiting another result...")];
+            body = ProgressCircular(time: Duration(seconds: CheckTime).inMilliseconds.toDouble(),); 
             checkDevice(CheckTime);
           });
         },

@@ -1,5 +1,16 @@
-
 import 'package:flutter/material.dart';
+import 'package:project/services/auth.dart';
+
+List<List<double>> NormalBpm = [[0, 1, 100, 160],
+                                [1, 3, 90, 150],
+                                [3, 5, 80, 140],
+                                [6, 12, 70, 120],
+                                [12, 18, 60, 100],
+                                [18, 100, 60, 100]];
+// https://www.webmd.com/heart/ss/slideshow-heart-rate
+// https://www.webmd.com/children/children-vital-signs
+// https://www.chestercountyhospital.org/news/health-eliving-blog/2023/january/whats-a-good-heart-rate-for-my-age
+// https://www.healthline.com/health/heart-rate-chart#normal-heart-rate
 class Heartdata {
   Heartdata({required Map<String, dynamic>? result, required this.bpm}) {
     if (result == null) {
@@ -34,7 +45,7 @@ class Heartdata {
     }
 
     String checkbpm = "Bình thường";
-    if (int.parse(bpm.toString()) < 60 && int.parse(bpm.toString()) > 90) {
+    if (checkBpm()) {
       checkbpm = "Bất thường";
     }
     Map<String, String> names = {"NOR": "Normal heart beat",
@@ -49,8 +60,8 @@ class Heartdata {
       const SizedBox(height: 10,),
       Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(width: 280, child: Text("Kết quả đo (chính xác nhất):")),
+        children: const [
+          SizedBox(width: 280, child: Text("Kết quả chuẩn đoán:")),
         ],
       ),
       Row(
@@ -65,7 +76,7 @@ class Heartdata {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.start,
         children:const [
-          SizedBox(width: 280, child: Text("Kết quả đo (toàn bộ):")),
+          SizedBox(width: 280, child: Text("Kết quả phân lớp:")),
         ],
       ),
       Row(
@@ -99,8 +110,20 @@ class Heartdata {
           SizedBox(width: 130),
         ],
       ),
-      const SizedBox(height: 60,),
+      const SizedBox(height: 30,),
 
     ];
+  }
+
+  bool checkBpm() {
+    var user = AuthService.localuser;
+    for (int i=0; i<NormalBpm.length; i++) {
+      if (user.getAge() >= NormalBpm[i][0] && user.getAge() < NormalBpm[i][1]) {
+        if (bpm < NormalBpm[i][2] || bpm > NormalBpm[i][3]) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

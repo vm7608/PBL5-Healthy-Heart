@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Models/Heartdata.dart';
 import 'package:project/Screens/Home/HeartMonitor/heartresult.dart';
+import 'package:project/Screens/Note.dart';
 import 'package:project/Screens/loading.dart';
 import 'package:project/WidgetS/Custom.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
@@ -106,7 +107,17 @@ class _historyDetailState extends State<historyDetail> {
                     Text("Đo vào lúc: $time"),
                     const SizedBox(height: 10,),
                     Text("Đo vào ngày: $date"),
-                  ]..addAll(heartdata.view()),
+                  ]..addAll(heartdata.view())
+                    ..add(
+                      TextButton(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) {
+                          return const Note();// SettingScreen();
+                        },));
+                      },
+                      child: Text("Xem mô tả các dấu hiệu bệnh tim mạch.", style: TextStyle(color: Colors.blue),)
+                      )
+                    ),
                 ),
               ),
             ],

@@ -15,16 +15,22 @@ class HomePageScreen extends StatefulWidget {
 
 class _HomePageScreenState extends State<HomePageScreen> {
 
-
   @override
   Widget build(BuildContext context) {
     var futuredata = FirebaseFirestore.instance.collection('home').get();
     
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
         actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                
+              });
+            },
+            icon: const Icon(Icons.refresh)
+          ),
           IconButton(
             onPressed: () {
               AuthService().SignOut();

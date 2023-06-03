@@ -21,8 +21,6 @@ class LocalUser {
 
       uid = document;
       email = user.email;
-      print(uid);
-      print(email);
     }
     else {
       document = null;
@@ -48,6 +46,17 @@ class LocalUser {
       gender = data['gender'];
       name = data['name'];
       birth = data['birth'];
+      
     });
+  }
+  double getAge() {
+    if (birth == null) {
+      return 0;
+    }
+    else {
+      // Convert string to DateTime
+      var temp = DateTime(int.parse(birth!.split("/")[2]), int.parse(birth!.split("/")[1]), int.parse(birth!.split("/")[0]));
+      return (DateTime.now().microsecondsSinceEpoch - temp.microsecondsSinceEpoch)/(1000000*365*24*60*60);
+    }
   }
 }

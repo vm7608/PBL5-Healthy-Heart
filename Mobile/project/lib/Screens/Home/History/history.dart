@@ -44,7 +44,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             }
             return ListView(
               children: [
-                for (var doc in snapshot.data!.docs) ListTile(
+                for (var doc in snapshot.data!.docs.reversed) ListTile(
                   shape: RoundedRectangleBorder( 
                     side: BorderSide(width: 1),
                     borderRadius: BorderRadius.circular(5),
