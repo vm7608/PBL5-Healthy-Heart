@@ -1,8 +1,7 @@
 <a href="https://flutter.dev/">
   <h1 align="center">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/cms-storage-bucket/6e19fee6b47b36ca613f.png">
-      <img alt="Flutter" src="https://storage.googleapis.com/cms-storage-bucket/c823e53b3a1a7b0d36a9.png">
+      <img alt="Flutter" src="https://github.com/vm7608/PBL5-Healthy-Heart/blob/main/Mobile/source/z4412173494259_f79241a9a10d8f37ebb426d9c2dc7d7f.jpg">
     </picture>
   </h1>
 </a>
