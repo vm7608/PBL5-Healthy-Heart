@@ -16,7 +16,7 @@ Chức năng của hệ thống gồm có:
 
 ## Chức năng đăng ký:
 
-<a float="right"><img src="source/mobile1.jpgs" alt="Dart diagram"></a>
+<a float="right"><img src="https://github.com/vm7608/PBL5-Healthy-Heart/blob/main/Mobile/source/mobile1.jpg?raw=true" alt="Dart diagram"></a>
 
 
 
