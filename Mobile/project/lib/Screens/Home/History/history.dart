@@ -51,10 +51,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   ), 
                   tileColor: Colors.white,
                   leading: const SpinKitPumpingHeart(color: Colors.red,),
-                  title: Text("Heart rate: ${doc['bpm']}"), 
+                  title: doc.data().containsKey("titles")? Text("${doc['titles']}") :Text("No title"), 
                   subtitle: Text('Date: ${doc['date_time'].toDate()}'),
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (context) {
+                      var mapdoc = doc.data();
+                      if (mapdoc.containsKey("titles")) {
+                        return historyDetail(id: doc.id, title: mapdoc["titles"],);
+                      }
                       return historyDetail(id: doc.id,);
                     }));
                   },

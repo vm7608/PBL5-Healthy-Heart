@@ -8,8 +8,8 @@ import 'package:project/WidgetS/Custom.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class historyDetail extends StatefulWidget {
-  const historyDetail({super.key, this.id});
-  final title = "Detail";
+  historyDetail({super.key, this.id, this.title = "Detail"});
+  String title;
   final id;
   @override
   State<historyDetail> createState() => _historyDetailState();

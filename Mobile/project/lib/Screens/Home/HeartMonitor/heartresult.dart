@@ -283,7 +283,6 @@ class _HeartResultState extends State<HeartResult> {
                   },
                   child: Issaved? const Text("Saved") : const Text("Save")
                 ),
-                
               ]..addAll(otherResult)
               ..add(
                 TextButton(
