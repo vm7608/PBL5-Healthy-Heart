@@ -14,6 +14,12 @@ Chức năng của hệ thống gồm có:
 
 # Cách sử dụng
 
+## Cài đặt
+
+Ứng dụng có thể được cài đặt thông qua file [release.apk](/Mobile/project/apk/app-release.apk). Người dùng tải về và cài đặt.
+
+Lưu ý: Hiện ứng dụng chỉ có thể chạy trên nền tảng android.
+
 ## Chức năng đăng ký:
 
 Để có thể sử dụng ứng dụng di động, người dùng trước hết cần tạo một tài khoản. Các thông tin cần cung cấp bao gồm:
@@ -102,7 +108,3 @@ Trang cá nhân gồm các thông tin mà người dùng đã cung cấp trong q
 <p align="center" >
 <img width="200" src="https://github.com/vm7608/PBL5-Healthy-Heart/blob/main/Mobile/source/mobile6.jpg?raw=true" alt="Dart diagram">
 <p>
-
-## APK
-
-Ứng dụng có thể được cài đặt thông qua file [release.apk](/Mobile/project/apk/app-release.apk)
