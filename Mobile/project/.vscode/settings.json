@@ -1,3 +1,4 @@
 {
-    "cmake.configureOnOpen": false
+    "cmake.configureOnOpen": false,
+    "cmake.sourceDirectory": "D:/Code/Subject/PBL5/code/PBL5-Healthy-Heart/Mobile/project/linux"
 }

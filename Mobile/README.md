@@ -102,3 +102,7 @@ Trang cá nhân gồm các thông tin mà người dùng đã cung cấp trong q
 <p align="center" >
 <img width="200" src="https://github.com/vm7608/PBL5-Healthy-Heart/blob/main/Mobile/source/mobile6.jpg?raw=true" alt="Dart diagram">
 <p>
+
+## APK
+
+Ứng dụng có thể được cài đặt thông qua file [release.apk](/Mobile/project/apk/app-release.apk)
